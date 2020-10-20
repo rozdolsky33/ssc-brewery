@@ -3,19 +3,21 @@ package guru.sfg.brewery.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -33,35 +35,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().and()
                 .httpBasic();
     }
-
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("spring")
-                .password("{noop}spring")
+                .password("{bcrypt}$2a$10$5M/0QewSvqxk5dExSJQUQOfPo/YAB2zprrpHhw75KGv059RXtkzrO")
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("{noop}password")
+                .password("{sha256}aeb471e862f8ce234b2d8320ddbe41de39ab845ef5eed4f1e6f8b3a35f703a9211f6508801238faf")
                 .roles("USER");
 
-         auth.inMemoryAuthentication().withUser("scott").password("{noop}tiger").roles("CUSTOMER");
+         auth.inMemoryAuthentication().withUser("scott").password("{ldap}{SSHA}sWbUaes/UOT27WaDAJIEFZcHDvBahduoD6Co+w==").roles("CUSTOMER");
     }
-    //    @Override
-//    @Bean
-//    protected UserDetailsService userDetailsService() {
-//        UserDetails admin = User.withDefaultPasswordEncoder()
-//                .username("spring")
-//                .password("spring")
-//                .roles("ADMIN")
-//                .build();
-//
-//        UserDetails user = User.withDefaultPasswordEncoder()
-//                .username("user")
-//                .password("password")
-//                .roles("USER")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(admin, user);
-//    }
 }
