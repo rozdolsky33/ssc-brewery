@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.util.DigestUtils;
 
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PasswordEncodingTests {
@@ -29,6 +28,12 @@ public class PasswordEncodingTests {
 
         System.out.println(sha256.encode(PASSWORD));
         System.out.println(sha256.encode(PASSWORD));
+    }
+
+    @Test
+    void testBCrypt15(){
+        PasswordEncoder bcrypt15 = new BCryptPasswordEncoder();
+        System.out.println(bcrypt15.encode("tiger"));
     }
 
     @Test
