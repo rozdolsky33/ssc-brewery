@@ -13,6 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 public class BeerRestControllerIT extends BaseIT {
 
+
+    @Test
+    void deleteBeerBadCreds() throws Exception {
+        mockMvc.perform(delete("/api/v1/beer/97df0c39-90c4-4ae0-b663-454e8e19c311")
+                .header("Api-Key", "spring").header("Api-Secret", "spring12345Bad"))
+                .andExpect(status().isUnauthorized());
+    }
     @Test
     void deleteBeer() throws Exception {
         mockMvc.perform(delete("/api/v1/beer/97df0c39-90c4-4ae0-b663-454e8e19c311")
@@ -46,5 +53,17 @@ public class BeerRestControllerIT extends BaseIT {
     void findBeerByUpc() throws Exception {
         mockMvc.perform(get("/api/v1/beerUpc/0631234200036"))
                 .andExpect(status().isOk());
+    }
+    @Test
+    void deleteBeerUrl() throws Exception {
+        mockMvc.perform(delete("/api/v1/beer/97df0c39-90c4-4ae0-b663-454e8e19c311")
+                .param("apiKey", "spring").param("apiSecret", "spring"))  //?
+                .andExpect(status().isOk());
+    }
+    @Test
+    void deleteBeerCredsUrl() throws Exception {
+        mockMvc.perform(delete("/api/v1/beer/97df0c39-90c4-4ae0-b663-454e8e19c311")
+                .param("apiKey", "spring").header("apiSecret", "guruXXX"))
+                .andExpect(status().isUnauthorized());
     }
 }
